@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from 'fs';
 import path from 'path';
 import ytdl from 'ytdl-core';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const videoUrl = 'https://www.youtube.com/watch?v=Q_oBBxPADd8';
-  const fileName = 'output';
+  // const videoUrl = 'https://www.youtube.com/watch?v=Q_oBBxPADd8';
+  const videoUrl = 'https://www.youtube.com/watch?v=akeytNVcIy4';
+  const fileName = `output-${new Date().getTime()}`;
 
   if (!videoUrl || !fileName) {
     return NextResponse.json({ message: 'Missing required fields' });
@@ -14,12 +16,7 @@ export async function GET() {
   const outputFilePath = path.join(process.cwd(), 'public', `${fileName}.mp4`);
 
   try {
-    // Xóa file trước đó nếu tồn tại
-    if (fs.existsSync(outputFilePath)) {
-      fs.unlinkSync(outputFilePath);
-      console.log(`Deleted existing file: ${outputFilePath}`);
-    }
-    
+
     const videoStream = ytdl(videoUrl, { quality: 'highestvideo', filter: 'videoandaudio' });
     const fileStream = fs.createWriteStream(outputFilePath);
 
@@ -46,7 +43,7 @@ export async function GET() {
 
     return NextResponse.json({ message: 'Download complete', filePath: `/${fileName}.mp4` });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     return NextResponse.json({ message: 'Error during download', error: error.message });
   }
